@@ -1,4 +1,14 @@
 [[redirects]]
-  from = "/:page.html"
-  to = "/:page"
+  from = "/home.html"
+  to = "/home"
+  status = 301
+
+[[redirects]]
+  from = "/log-in.html"
+  to = "/log-in"
+  status = 301
+
+[[redirects]]
+  from = "/payment_09-elite.html"
+  to = "/payment_09-elite"
   status = 301

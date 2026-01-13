@@ -207,25 +207,20 @@ function showSignupPage() {
   clearAuthErrors();
 }
 
-function clearAuthErrors() {
-  ['loginError', 'signupError'].forEach(id => {
-    const el = getElement(id);
-    if (el) {
-      el.textContent = '';
-      el.classList.remove('show');
-      el.style.display = 'none';
-    }
-  });
-}
-
 function showAuthError(elementId, message) {
-  const el = getElement(elementId);
+  const el = document.getElementById(elementId);
   if (el) {
     el.textContent = message;
     el.classList.add('show');
-    el.style.display = 'block';
   }
-  console.error('Auth error:', message);
+}
+
+function clearAuthErrors() {
+  const el = document.getElementById('signupError');
+  if (el) {
+    el.classList.remove('show');
+    el.textContent = '';
+  }
 }
 
 function togglePasswordVisibility(inputId, button) {
@@ -255,44 +250,100 @@ function goToStep1() {
   clearAuthErrors();
 }
 
-function goToStep2() {
-  const username = getElement('signupUsername')?.value.trim();
-  const email = getElement('signupEmail')?.value.trim();
-  const password = getElement('signupPassword')?.value;
-  const confirmPassword = getElement('signupConfirmPassword')?.value;
+async function goToStep2() {
+  // 1. Get Form Elements
+  const usernameInput = document.getElementById('signupUsername');
+  const emailInput = document.getElementById('signupEmail');
+  const passwordInput = document.getElementById('signupPassword');
+  const confirmPasswordInput = document.getElementById('signupConfirmPassword');
+  const errorDiv = document.getElementById('signupError');
 
-  if (!username || username.length < 3) {
-    showAuthError('signupError', 'Username must be at least 3 characters');
+  // 2. Get Values
+  const username = usernameInput.value.trim();
+  const email = emailInput.value.trim();
+  const password = passwordInput.value;
+  const confirmPassword = confirmPasswordInput.value;
+
+  // 3. Helper Function to show error in UI
+  const showError = (message) => {
+    errorDiv.textContent = message;
+    errorDiv.classList.add('show');
+    errorDiv.style.display = 'block'; // Ensure it's visible
+  };
+
+  // 4. Clear previous errors
+  errorDiv.textContent = '';
+  errorDiv.classList.remove('show');
+  errorDiv.style.display = 'none';
+
+  // --- VALIDATION LOGIC ---
+
+  // A. Username Length Check
+  if (username.length < 3) {
+    showError('Username must be at least 3 characters long.');
     return;
   }
-  
-  if (!/^[a-zA-Z0-9_]+$/.test(username)) {
-    showAuthError('signupError', 'Username can only contain letters, numbers, and underscores');
+
+  // B. Username Character Check (The specific error you requested)
+  // Regex: Only allows a-z, A-Z, 0-9, and _ (No spaces, dots, or dashes)
+  const usernameRegex = /^[a-zA-Z0-9_]+$/;
+  if (!usernameRegex.test(username)) {
+    showError('Auth error: Username can only contain letters, numbers, and underscores');
     return;
   }
 
-  if (!email || !isValidEmail(email)) {
-    showAuthError('signupError', 'Please enter a valid email address');
+  // C. Email Format Check
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+    showError('Please enter a valid email address.');
     return;
   }
 
-  if (!password || password.length < 6) {
-    showAuthError('signupError', 'Password must be at least 6 characters');
+  // D. Password Length Check
+  if (password.length < 6) {
+    showError('Password must be at least 6 characters.');
     return;
   }
 
+  // E. Password Match Check
   if (password !== confirmPassword) {
-    showAuthError('signupError', 'Passwords do not match');
+    showError('Passwords do not match.');
     return;
   }
 
-  clearAuthErrors();
-  const step1 = getElement('signupStep1');
-  const step2 = getElement('signupStep2');
-  if (step1) step1.classList.remove('active');
-  if (step2) step2.classList.add('active');
-}
+  // --- DATABASE CHECK (Supabase) ---
+  try {
+    // Show a small hint that we are checking availability
+    usernameInput.style.opacity = "0.5";
+    
+    const { data: existingUser, error: sbError } = await sb
+      .from('user_profiles')
+      .select('user_id')
+      .eq('user_id', username)
+      .maybeSingle();
 
+    usernameInput.style.opacity = "1";
+
+    if (sbError) throw sbError;
+
+    if (existingUser) {
+      showError('This username is already taken. Please try another.');
+      return;
+    }
+
+    // --- SUCCESS: MOVE TO STEP 2 ---
+    document.getElementById('signupStep1').classList.remove('active');
+    document.getElementById('signupStep2').classList.add('active');
+    
+    // Smooth scroll to top of card for the new step
+    document.querySelector('.signup-card').scrollTop = 0;
+
+  } catch (err) {
+    console.error('Check Username Error:', err);
+    showError('Connection error. Please try again.');
+    usernameInput.style.opacity = "1";
+  }
+}
 // ===== AUTH FORMS SETUP =====
 function setupAuthForms() {
   const loginForm = getElement('loginForm');
@@ -376,51 +427,34 @@ async function handleLogin(e) {
 async function handleSignup(e) {
   e.preventDefault();
   
-  const username = getElement('signupUsername')?.value.trim();
-  const email = getElement('signupEmail')?.value.trim();
-  const password = getElement('signupPassword')?.value;
-  const fullName = getElement('signupFullName')?.value.trim();
-  const dob = getElement('signupDob')?.value;
-  const gender = getElement('signupGender')?.value;
-  const bio = getElement('signupBio')?.value.trim() || '';
-
-  // Validation
-  if (!fullName) {
-    showAuthError('signupError', 'Please enter your full name');
-    return;
-  }
-  if (!dob) {
-    showAuthError('signupError', 'Please enter your date of birth');
-    return;
-  }
-  if (!gender) {
-    showAuthError('signupError', 'Please select your gender');
-    return;
-  }
-
   const btn = e.target.querySelector('.auth-btn.primary');
-  const btnText = btn?.querySelector('.btn-text');
-  const btnLoader = btn?.querySelector('.btn-loader');
+  const btnText = btn.querySelector('.btn-text');
+  const btnLoader = btn.querySelector('.btn-loader');
   
-  if (btn) btn.disabled = true;
-  if (btnText) btnText.classList.add('hidden');
-  if (btnLoader) btnLoader.classList.remove('hidden');
+  const username = getElement('signupUsername').value.trim();
+  const email = getElement('signupEmail').value.trim();
+  const password = getElement('signupPassword').value;
+  const fullName = getElement('signupFullName').value.trim();
+  const dob = getElement('signupDob').value;
+  const gender = getElement('signupGender').value;
+  const bio = getElement('signupBio').value.trim();
+
+  clearAuthErrors();
+
+  // Final sanity check for username (in case they bypassed Step 1)
+  if (!/^[a-zA-Z0-9_]+$/.test(username)) {
+    showAuthError('signupError', 'Auth error: Username can only contain letters, numbers, and underscores');
+    return;
+  }
+
+  if (!fullName || !dob || !gender) {
+    showAuthError('signupError', 'Please fill in all required fields.');
+    return;
+  }
+
 
   try {
-    console.log('📝 Creating account for:', username);
-    
-    // Check if username is taken
-    const { data: existingUser } = await sb
-      .from('user_profiles')
-      .select('user_id')
-      .eq('user_id', username)
-      .maybeSingle();
-
-    if (existingUser) {
-      throw new Error('Username is already taken');
-    }
-
-    // Create auth user
+    // 1. Create Supabase Auth Account
     const { data: authData, error: authError } = await sb.auth.signUp({
       email: email,
       password: password,
@@ -433,53 +467,52 @@ async function handleSignup(e) {
     });
 
     if (authError) throw authError;
-    if (!authData.user) throw new Error('Failed to create account');
 
-    console.log('✅ Auth user created:', authData.user.id);
+    if (authData.user) {
+      // 2. Create Custom Profile
+      const { error: profileError } = await sb
+        .from('user_profiles')
+        .insert({
+          id: authData.user.id,
+          user_id: username,
+          email: email,
+          full_name: fullName,
+          dob: dob,
+          gender: gender,
+          bio: bio || "Hey there! I am using Potup.",
+          avatar_url: 'https://i.imgur.com/6VBx3io.png',
+          followers: 0,
+          created_at: new Date().toISOString()
+        });
 
-    // Wait for auth to settle
-    await new Promise(r => setTimeout(r, 500));
+      if (profileError) throw profileError;
 
-    // Create profile
-    const { error: profileError } = await sb
-      .from('user_profiles')
-      .insert({
-        id: authData.user.id,
-        user_id: username,
-        email: email,
-        full_name: fullName,
-        dob: dob,
-        gender: gender,
-        bio: bio || null,
-        avatar_url: 'https://i.imgur.com/6VBx3io.png',
-        followers: 0,
-        created_at: new Date().toISOString()
-      });
-
-    if (profileError) {
-      console.warn('⚠️ Profile creation warning:', profileError);
-      // Don't throw - profile can be created on login
+      // Check if session exists (Auto-login) or if email verify is on
+      if (authData.session) {
+        showToast('Account created! Logging you in...', 'success');
+        // initializeApp() will be triggered by onAuthStateChange
+      } else {
+        showToast('Account created! Please check your email to verify.', 'info');
+        showLoginPage();
+      }
     }
 
-    if (authData.session) {
-      showToast('Account created! Welcome!', 'success');
-      currentUser = authData.user;
-      await initializeApp();
-    } else {
-      showToast('Account created! Please check your email to verify.', 'info');
-      showLoginPage();
+  } catch (error) {
+    console.error('Signup Error:', error);
+    let errorMsg = error.message;
+    
+    // Custom friendly messages for common Supabase Auth errors
+    if (errorMsg.includes('already registered')) {
+      errorMsg = "Email is already in use. Please sign in.";
     }
     
-  } catch (error) {
-    console.error('❌ Signup failed:', error);
-    showAuthError('signupError', error.message || 'Signup failed');
+    showAuthError('signupError', errorMsg);
   } finally {
-    if (btn) btn.disabled = false;
-    if (btnText) btnText.classList.remove('hidden');
-    if (btnLoader) btnLoader.classList.add('hidden');
+    btn.disabled = false;
+    btnText.classList.remove('hidden');
+    btnLoader.classList.add('hidden');
   }
 }
-
 // ===== APP INITIALIZATION =====
 async function initializeApp() {
   // Prevent multiple simultaneous initializations

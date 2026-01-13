@@ -1,63 +1,146 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<meta name="description" content="Potup is a social media platform for sharing posts, connecting with people, and discovering conversations that matter.">
-    <title>Potup</title>
-    <style>@import url('https://fonts.googleapis.com/css2?family=Edu+NSW+ACT+Cursive:wght@400..700&display=swap');</style>
-	<link rel="icon" type="image/png" href="ChatGPT_Image_Dec_12__2025__03_11_52_PM__1_-removebg-preview.png">
-    <style>
-        body {
-            align-items: center;
-            background-color: black;
-        }
-        .div {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
-        .div img {
-            width: 130px;
-            height: auto;
-        }
-        .div h1 {
-            color: white;
-            font-family: "Edu NSW ACT Cursive", cursive;
-            font-size: 50px;
-            text-align: center;
-            margin-top: 0;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+  <title>Potup – Global Social Media Platform</title>
+
+  <meta name="description" content="Potup is a global social media platform where anyone can post, share, reply, and connect with people worldwide." />
+  <meta name="keywords" content="potup, social media platform, global social network, post, share, reply, connect" />
+
+  <link rel="icon" type="image/png" href="ChatGPT_Image_Dec_12__2025__03_11_52_PM__1_-removebg-preview.png">
+
+  <link href="https://fonts.googleapis.com/css2?family=Edu+NSW+ACT+Cursive:wght@400..700&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: black;
+      color: white;
+    }
+
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 20px;
+    }
+
+    .logo {
+      width: 140px;
+      margin-bottom: 20px;
+    }
+
+    h1 {
+      font-family: "Edu NSW ACT Cursive", cursive;
+      font-size: 56px;
+      margin: 0;
+    }
+
+    .tagline {
+      max-width: 700px;
+      font-size: 18px;
+      margin-top: 16px;
+      opacity: 0.9;
+    }
+
+    .cta {
+      margin-top: 30px;
+    }
+
+    .cta a {
+      display: inline-block;
+      padding: 12px 28px;
+      background: white;
+      color: black;
+      text-decoration: none;
+      border-radius: 8px;
+      font-weight: bold;
+      transition: 0.2s;
+    }
+
+    .cta a:hover {
+      opacity: 0.85;
+    }
+
+    .content {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 60px 20px;
+      line-height: 1.6;
+    }
+
+    .content h2 {
+      margin-top: 40px;
+    }
+
+    footer {
+      text-align: center;
+      padding: 30px;
+      opacity: 0.6;
+      font-size: 14px;
+    }
+  </style>
 </head>
 <body>
-    <div class="div">
-        <img src="ChatGPT_Image_Dec_12__2025__03_11_52_PM__1_-removebg-preview.png">
+
+  <!-- HERO / SPLASH -->
+  <section class="hero">
+    <img class="logo" src="ChatGPT_Image_Dec_12__2025__03_11_52_PM__1_-removebg-preview.png" alt="Potup logo">
+
+    <h1>Potup</h1>
+
+    <p class="tagline">
+      Potup is a global social media platform where anyone can post, share, reply, and connect with people worldwide.
+    </p>
+
+    <div class="cta">
+      <a href="home">Open Potup</a>
     </div>
-    
-<script>
-    // Always redirect to home.html after 2 seconds
-    setTimeout(() => {
-        window.location.href = 'home';
-    }, 2000);
+  </section>
 
-    // Disable right-click
-    document.addEventListener('contextmenu', function (e) {
-        e.preventDefault();
-    });
+  <!-- SEO CONTENT -->
+  <section class="content">
 
-    // Block dev tools shortcuts
-    document.addEventListener('keydown', function (e) {
-        if (
-            e.key === 'F12' ||
-            (e.ctrlKey && e.shiftKey && ['I', 'C', 'J'].includes(e.key)) ||
-            (e.ctrlKey && e.key === 'U')
-        ) {
-            e.preventDefault();
-        }
-    });
-</script>
+    <h2>What is Potup?</h2>
+    <p>
+      Potup is a modern social media platform built for open, public conversations. It allows users to create posts,
+      reply to discussions, and share content that can be seen by anyone around the world. The goal of Potup is to make
+      communication simple, fast, and globally accessible.
+    </p>
+
+    <h2>Why Potup?</h2>
+    <p>
+      Unlike closed networks, Potup focuses on public content discovery and global reach. Whether you want to share ideas,
+      discuss topics, or explore trending conversations, Potup provides a clean and easy-to-use environment to connect
+      with people worldwide.
+    </p>
+
+    <h2>Features</h2>
+    <ul>
+      <li>Create public posts visible to everyone</li>
+      <li>Reply and repost system</li>
+      <li>Global content feed</li>
+      <li>Fast and simple interface</li>
+      <li>Accessible from anywhere in the world</li>
+    </ul>
+
+    <h2>Get Started</h2>
+    <p>
+      You can start using Potup instantly by opening the app. No complicated setup is required. Join the global
+      conversation and share what matters to you.
+    </p>
+
+  </section>
+
+  <footer>
+    © 2026 Potup. All rights reserved.
+  </footer>
+
 </body>
 </html>

@@ -3,24 +3,26 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-
   <title>Potup – Global Social Media Platform</title>
-
   <meta name="description" content="Potup is a global social media platform where anyone can post, share, reply, and connect with people worldwide easily. Available for desktop and android." />
-  <meta name="keywords" content="potup, social media platform, global social network, post, share, reply, connect, potup inc" />
-
+  <meta name="keywords" content="potup, social media platform, global social network, post, share, reply, connect, potup inc, suraj kumar mallick, suraj, new app, news, latest news" />
   <link rel="icon" type="image/png" href="ChatGPT_Image_Dec_12__2025__03_11_52_PM__1_-removebg-preview.png">
-
-  <link href="https://fonts.googleapis.com/css2?family=Edu+NSW+ACT+Cursive:wght@400..700&display=swap" rel="stylesheet">
-
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-    body {
+    * {
       margin: 0;
-      font-family: Arial, sans-serif;
-      background-color: black;
-      color: white;
+      padding: 0;
+      box-sizing: border-box;
     }
-
+    
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      overflow-x: hidden;
+    }
+    
     .hero {
       min-height: 100vh;
       display: flex;
@@ -28,85 +30,387 @@
       justify-content: center;
       align-items: center;
       text-align: center;
-      padding: 20px;
+      padding: 40px 20px;
+      position: relative;
+      overflow: hidden;
     }
-
+    
+    .hero::before {
+      content: '';
+      position: absolute;
+      width: 500px;
+      height: 500px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 50%;
+      top: -250px;
+      right: -250px;
+      animation: float 6s ease-in-out infinite;
+    }
+    
+    .hero::after {
+      content: '';
+      position: absolute;
+      width: 400px;
+      height: 400px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 50%;
+      bottom: -200px;
+      left: -200px;
+      animation: float 8s ease-in-out infinite;
+    }
+    
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-20px); }
+    }
+    
+    .hero-content {
+      position: relative;
+      z-index: 1;
+      max-width: 800px;
+    }
+    
+    .logo-container {
+      margin-bottom: 30px;
+      animation: fadeInDown 0.8s ease-out;
+    }
+    
     .logo {
-      width: 140px;
+      width: 120px;
+      height: 120px;
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(10px);
+      border-radius: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    
+    .logo i {
+      font-size: 60px;
+      color: white;
+    }
+    
+    h1 {
+      font-size: clamp(48px, 8vw, 72px);
+      font-weight: 700;
+      margin-bottom: 20px;
+      letter-spacing: -1px;
+      animation: fadeInUp 0.8s ease-out 0.2s backwards;
+    }
+    
+    .tagline {
+      font-size: clamp(16px, 3vw, 20px);
+      font-weight: 300;
+      line-height: 1.6;
+      margin-bottom: 40px;
+      opacity: 0.95;
+      animation: fadeInUp 0.8s ease-out 0.4s backwards;
+    }
+    
+    .cta-buttons {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+      justify-content: center;
+      animation: fadeInUp 0.8s ease-out 0.6s backwards;
+    }
+    
+    .cta-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      padding: 18px 48px;
+      text-decoration: none;
+      border-radius: 50px;
+      font-weight: 600;
+      font-size: 18px;
+      transition: all 0.3s ease;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    }
+    
+    .cta-button.primary {
+      background: white;
+      color: #667eea;
+    }
+    
+    .cta-button.primary:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 15px 50px rgba(0, 0, 0, 0.3);
+      background: #f8f9ff;
+    }
+    
+    .cta-button.secondary {
+      background: rgba(255, 255, 255, 0.15);
+      color: white;
+      backdrop-filter: blur(10px);
+      border: 2px solid rgba(255, 255, 255, 0.3);
+    }
+    
+    .cta-button.secondary:hover {
+      transform: translateY(-3px);
+      background: rgba(255, 255, 255, 0.25);
+      box-shadow: 0 15px 50px rgba(0, 0, 0, 0.3);
+    }
+    
+    .cta-button i {
+      font-size: 20px;
+    }
+    
+    @keyframes fadeInDown {
+      from {
+        opacity: 0;
+        transform: translateY(-30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    .features {
+      background: rgba(0, 0, 0, 0.2);
+      backdrop-filter: blur(10px);
+      padding: 80px 20px;
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    
+    .section-title {
+      text-align: center;
+      font-size: clamp(32px, 5vw, 42px);
+      font-weight: 600;
+      margin-bottom: 60px;
+    }
+    
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 30px;
+      margin-bottom: 60px;
+    }
+    
+    .feature-card {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      padding: 40px 30px;
+      border-radius: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      transition: all 0.3s ease;
+    }
+    
+    .feature-card:hover {
+      transform: translateY(-5px);
+      background: rgba(255, 255, 255, 0.15);
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    }
+    
+    .feature-icon {
+      width: 60px;
+      height: 60px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       margin-bottom: 20px;
     }
-
-    h1 {
-      font-family: "Edu NSW ACT Cursive", cursive;
-      font-size: 56px;
-      margin: 0;
+    
+    .feature-icon i {
+      font-size: 28px;
     }
-
-    .tagline {
-      max-width: 700px;
-      font-size: 18px;
-      margin-top: 16px;
+    
+    .feature-card h3 {
+      font-size: 22px;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+    
+    .feature-card p {
+      font-size: 15px;
+      line-height: 1.6;
       opacity: 0.9;
+      font-weight: 300;
     }
-
-    .cta {
-      margin-top: 30px;
-    }
-
-    .cta a {
-      display: inline-block;
-      padding: 12px 28px;
-      background: white;
-      color: black;
-      text-decoration: none;
-      border-radius: 8px;
-      font-weight: bold;
-      transition: 0.2s;
-    }
-
-    .cta a:hover {
-      opacity: 0.85;
-    }
-
-    .content {
+    
+    .content-section {
+      padding: 80px 20px;
       max-width: 900px;
       margin: 0 auto;
-      padding: 60px 20px;
-      line-height: 1.6;
     }
-
-    .content h2 {
+    
+    .content-section h2 {
+      font-size: clamp(28px, 4vw, 36px);
+      font-weight: 600;
+      margin-bottom: 20px;
       margin-top: 40px;
     }
-
+    
+    .content-section p {
+      font-size: 16px;
+      line-height: 1.8;
+      opacity: 0.9;
+      font-weight: 300;
+      margin-bottom: 20px;
+    }
+    
+    .content-section ul {
+      list-style: none;
+      margin: 20px 0;
+    }
+    
+    .content-section ul li {
+      padding: 12px 0;
+      padding-left: 30px;
+      position: relative;
+      font-size: 16px;
+      font-weight: 300;
+    }
+    
+    .content-section ul li::before {
+      content: '\f00c';
+      font-family: 'Font Awesome 6 Free';
+      font-weight: 900;
+      position: absolute;
+      left: 0;
+      color: #a8ff78;
+    }
+    
     footer {
+      background: rgba(0, 0, 0, 0.3);
       text-align: center;
-      padding: 30px;
-      opacity: 0.6;
+      padding: 40px 20px;
       font-size: 14px;
+      font-weight: 300;
+      opacity: 0.8;
+    }
+    
+    @media (max-width: 768px) {
+      .hero {
+        padding: 30px 20px;
+      }
+      
+      .logo {
+        width: 100px;
+        height: 100px;
+      }
+      
+      .logo i {
+        font-size: 50px;
+      }
+      
+      .cta-button {
+        padding: 16px 40px;
+        font-size: 16px;
+      }
+      
+      .features {
+        padding: 60px 20px;
+      }
+      
+      .feature-grid {
+        gap: 20px;
+      }
+      
+      .content-section {
+        padding: 60px 20px;
+      }
     }
   </style>
 </head>
 <body>
-
-  <!-- HERO / SPLASH -->
   <section class="hero">
-    <img class="logo" src="ChatGPT_Image_Dec_12__2025__03_11_52_PM__1_-removebg-preview.png" alt="Potup logo">
-
-    <h1>Potup</h1>
-
-    <p class="tagline">
-      Potup is a global social media platform where anyone can post, share, reply, and connect with people worldwide.
-    </p>
-
-    <div class="cta">
-      <a href="home">Open Potup</a>
+    <div class="hero-content">
+      <div class="logo-container">
+        <div class="logo">
+          <i class="fas fa-comments"></i>
+        </div>
+      </div>
+      <h1>Potup</h1>
+      <p class="tagline">
+        A global social media platform where anyone can post, share, reply, and connect with people worldwide.
+      </p>
+      <div class="cta-buttons">
+        <a href="home" class="cta-button primary">
+          <span>Get Started</span>
+          <i class="fas fa-arrow-right"></i>
+        </a>
+        <a href="https://apkpure.com/p/com.example.potup" class="cta-button secondary">
+          <i class="fab fa-android"></i>
+          <span>Download for Android</span>
+        </a>
+      </div>
     </div>
   </section>
 
-  <!-- SEO CONTENT -->
-  <section class="content">
+  <section class="features">
+    <div class="container">
+      <h2 class="section-title">Why Choose Potup?</h2>
+      <div class="feature-grid">
+        <div class="feature-card">
+          <div class="feature-icon">
+            <i class="fas fa-globe"></i>
+          </div>
+          <h3>Global Reach</h3>
+          <p>Connect with millions of users worldwide and share your voice on a truly global platform.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">
+            <i class="fas fa-bolt"></i>
+          </div>
+          <h3>Lightning Fast</h3>
+          <p>Experience instant posting, real-time updates, and seamless interactions without any lag.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">
+            <i class="fas fa-lock"></i>
+          </div>
+          <h3>Privacy First</h3>
+          <p>Your data is protected with industry-leading security measures and transparent privacy policies.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">
+            <i class="fas fa-users"></i>
+          </div>
+          <h3>Community Driven</h3>
+          <p>Join vibrant communities, discover trending topics, and engage in meaningful conversations.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">
+            <i class="fas fa-mobile-alt"></i>
+          </div>
+          <h3>Mobile & Desktop</h3>
+          <p>Access Potup from any device with our responsive design and dedicated mobile app.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">
+            <i class="fas fa-palette"></i>
+          </div>
+          <h3>Clean Interface</h3>
+          <p>Enjoy a beautiful, intuitive design that makes social networking simple and enjoyable.</p>
+        </div>
+      </div>
+    </div>
+  </section>
 
+  <section class="content-section">
     <h2>What is Potup?</h2>
     <p>
       Potup is a modern social media platform built for open, public conversations. It allows users to create posts,
@@ -114,34 +418,27 @@
       communication simple, fast, and globally accessible.
     </p>
 
-    <h2>Why Potup?</h2>
-    <p>
-      Unlike closed networks, Potup focuses on public content discovery and global reach. Whether you want to share ideas,
-      discuss topics, or explore trending conversations, Potup provides a clean and easy-to-use environment to connect
-      with people worldwide.
-    </p>
-
-    <h2>Features</h2>
+    <h2>Key Features</h2>
     <ul>
       <li>Create public posts visible to everyone</li>
-      <li>Reply and repost system</li>
-      <li>Global content feed</li>
-      <li>Fast and simple interface</li>
+      <li>Advanced reply and repost system</li>
+      <li>Personalized global content feed</li>
+      <li>Fast and intuitive interface</li>
       <li>Accessible from anywhere in the world</li>
+      <li>Real-time notifications</li>
+      <li>Rich media support</li>
     </ul>
 
-    <h2>Get Started</h2>
+    <h2>Get Started Today</h2>
     <p>
       You can start using Potup instantly by opening the app. No complicated setup is required. Join the global
-      conversation and share what matters to you.
+      conversation and share what matters to you. Express yourself, discover new perspectives, and build connections
+      that span the globe.
     </p>
-
   </section>
 
   <footer>
-    © 2026 Potup. All rights reserved.
+    © 2026 Potup Inc. All rights reserved.
   </footer>
-
 </body>
 </html>
-

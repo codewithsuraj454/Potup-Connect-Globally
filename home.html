@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Potup</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<link rel="icon" type="image/png" href="ChatGPT_Image_Dec_12__2025__03_11_52_PM__1_-removebg-preview.png">
+<link rel="stylesheet" href="style.css">
+<script src="app.js" defer></script>
+<script src="contextmenu.js"></script>
+</head>
+<body>
+
+<!-- ======================================================
+     AUTH CONTAINER
+     ====================================================== -->
+<div id="authContainer" class="auth-container">
+
+  <!-- LOGIN PAGE -->
+  <div id="loginPage" class="auth-page active">
+    <div class="auth-card">
+      <div class="auth-header">
+        <h1 class="auth-logo">Potup</h1>
+        <p class="auth-subtitle">Welcome back! Sign in to continue</p>
+      </div>
+      <form id="loginForm" class="auth-form">
+        <div class="input-group">
+          <span class="material-icons input-icon">email</span>
+          <input type="email" id="loginEmail" placeholder="Email address" required>
+        </div>
+        <div class="input-group">
+          <span class="material-icons input-icon">lock</span>
+          <input type="password" id="loginPassword" placeholder="Password" required>
+          <button type="button" class="toggle-password" onclick="togglePasswordVisibility('loginPassword', this)">
+            <span class="material-icons">visibility_off</span>
+          </button>
+        </div>
+        <div class="auth-error" id="loginError"></div>
+        <button type="submit" class="auth-btn primary">
+          <span class="btn-text">Sign In</span>
+          <span class="btn-loader hidden"><span class="spinner-small"></span></span>
+        </button>
+      </form>
+      <div class="auth-footer">
+        <p>Don't have an account? <a href="#" onclick="showSignupPage()">Sign up</a></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SIGNUP PAGE -->
+  <div id="signupPage" class="auth-page">
+    <div class="auth-card signup-card">
+      <div class="auth-header">
+        <h1 class="auth-logo">Potup</h1>
+        <p class="auth-subtitle">Create your account</p>
+      </div>
+      <form id="signupForm" class="auth-form">
+
+        <!-- Step 1 -->
+        <div id="signupStep1" class="signup-step active">
+          <div class="step-indicator">
+            <div class="step active">1</div>
+            <div class="step-line"></div>
+            <div class="step">2</div>
+          </div>
+          <h3 class="step-title">Account Details</h3>
+          <p style="font-size:12px;color:var(--text-tertiary);text-align:center;margin-top:-4px;">Username: letters, numbers, and underscores only.</p>
+          <div class="input-group">
+            <span class="material-icons input-icon">person</span>
+            <input type="text" id="signupUsername" placeholder="Username" required minlength="3" maxlength="20">
+          </div>
+          <div class="input-group">
+            <span class="material-icons input-icon">email</span>
+            <input type="email" id="signupEmail" placeholder="Email address" required>
+          </div>
+          <div class="input-group">
+            <span class="material-icons input-icon">lock</span>
+            <input type="password" id="signupPassword" placeholder="Password (min 6 characters)" required minlength="6">
+            <button type="button" class="toggle-password" onclick="togglePasswordVisibility('signupPassword', this)">
+              <span class="material-icons">visibility_off</span>
+            </button>
+          </div>
+          <div class="input-group">
+            <span class="material-icons input-icon">lock</span>
+            <input type="password" id="signupConfirmPassword" placeholder="Confirm password" required>
+          </div>
+          <button type="button" class="auth-btn primary" onclick="goToStep2()">
+            Continue
+            <span class="material-icons">arrow_forward</span>
+          </button>
+        </div>
+
+        <!-- Step 2 -->
+        <div id="signupStep2" class="signup-step">
+          <div class="step-indicator">
+            <div class="step completed">✓</div>
+            <div class="step-line active"></div>
+            <div class="step active">2</div>
+          </div>
+          <h3 class="step-title">Personal Information</h3>
+          <div class="input-group">
+            <span class="material-icons input-icon">badge</span>
+            <input type="text" id="signupFullName" placeholder="Full Name" required>
+          </div>
+          <div class="input-group">
+            <span class="material-icons input-icon">cake</span>
+            <input type="date" id="signupDob" required>
+            <label class="floating-label">Date of Birth</label>
+          </div>
+          <div class="input-group select-group">
+            <span class="material-icons input-icon">wc</span>
+            <select id="signupGender" required>
+              <option value="" disabled selected>Select Gender</option>
+              <option value="male">Male</option>
+              <option value="female">Female</option>
+              <option value="non-binary">Non-binary</option>
+              <option value="prefer-not-to-say">Prefer not to say</option>
+            </select>
+          </div>
+          <div class="input-group">
+            <textarea id="signupBio" placeholder="Write a short bio (optional)" rows="3" maxlength="200"></textarea>
+          </div>
+          <div class="auth-error" id="signupError"></div>
+          <div class="step-buttons">
+            <button type="button" class="auth-btn secondary" onclick="goToStep1()">
+              <span class="material-icons">arrow_back</span>
+              Back
+            </button>
+            <button type="submit" class="auth-btn primary">
+              <span class="btn-text">Create Account</span>
+              <span class="btn-loader hidden"><span class="spinner-small"></span></span>
+            </button>
+          </div>
+        </div>
+
+      </form>
+      <div class="auth-footer">
+        <p>Already have an account? <a href="#" onclick="showLoginPage()">Sign in</a></p>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+
+<!-- ======================================================
+     MAIN APP
+     ====================================================== -->
+<div id="appContainer" class="app-container hidden">
+
+  <!-- DESKTOP NAV -->
+  <nav id="desktopNav">
+    <h1>Potup</h1>
+
+    <div class="nav-item active" data-page="homePage">
+      <span class="material-icons">home</span>
+      <span>Home</span>
+    </div>
+
+    <div class="nav-item" data-page="notificationsPage">
+      <span class="material-icons">notifications</span>
+      <span>Notifications</span>
+      <span id="notificationBadge" class="notification-badge hidden">0</span>
+    </div>
+
+    <div class="nav-item" data-page="profilePage">
+      <span class="material-icons">person</span>
+      <span>Profile</span>
+    </div>
+
+    <div class="nav-item" data-page="settingsPage">
+      <span class="material-icons">settings</span>
+      <span>Settings</span>
+    </div>
+
+    <div class="nav-item" data-page="postPage">
+      <span class="material-icons">add</span>
+      <span>Post</span>
+    </div>
+
+    <div class="timer-widget">
+      <h4>Time on Site</h4>
+      <div class="timer-display" id="timerDisplay">00:00:00</div>
+    </div>
+
+    <div class="nav-user-info">
+      <img id="navUserAvatar" src="https://i.imgur.com/6VBx3io.png" alt="Avatar">
+      <div class="nav-user-details">
+        <span id="navUsername">Username</span>
+        <span id="navUserEmail">user@email.com</span>
+      </div>
+    </div>
+  </nav>
+
+  <!-- MOBILE BOTTOM NAV -->
+  <div class="mobile-nav">
+    <div class="mobile-nav-items">
+      <div class="mobile-nav-item active" data-page="homePage">
+        <span class="material-icons">home</span>
+      </div>
+      <div class="mobile-nav-item" data-page="notificationsPage">
+        <span class="material-icons">notifications</span>
+        <span id="mobileNotificationBadge" class="mobile-notification-badge hidden">0</span>
+      </div>
+      <div class="mobile-nav-item" data-page="postPage">
+        <span class="material-icons">add</span>
+      </div>
+      <div class="mobile-nav-item" data-page="profilePage">
+        <span class="material-icons">person</span>
+      </div>
+      <div class="mobile-nav-item" data-page="settingsPage">
+        <span class="material-icons">settings</span>
+      </div>
+    </div>
+  </div>
+
+  <main>
+
+    <!-- ======================== HOME PAGE ======================== -->
+    <div id="homePage" class="page active">
+      <div class="feed-container">
+        <div class="page-header">
+          <h2>Home</h2>
+          <div class="header-actions">
+            <button class="icon-btn-header" id="mobileSearchBtn">
+              <span class="material-icons" style="font-size:18px;">search</span>
+            </button>
+            <button class="icon-btn-header" id="refreshFeedBtn">
+              <span class="material-icons" style="font-size:18px;">refresh</span>
+            </button>
+          </div>
+        </div>
+        <div class="feed-scroll-area">
+          <h1 id="greeting" style="color:var(--text-primary);padding:20px 20px 4px;">Good morning</h1>
+          <h2 id="feedSubtext" style="color:var(--text-secondary);padding:0 20px 16px;font-size:14px;font-weight:400;">Here's your feed —</h2>
+          <div id="feed"></div>
+          <div id="feedLoader" class="loading-spinner hidden">
+            <div class="spinner"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT SIDEBAR -->
+      <div id="searchBar">
+        <div class="search-widget">
+          <h3>Search Users</h3>
+          <div class="search-container">
+            <span class="material-icons search-icon">search</span>
+            <input type="text" id="userSearch" placeholder="Search for users..." class="search-input">
+          </div>
+          <div id="searchResults" class="search-results"></div>
+        </div>
+
+        <div class="newssection">
+          <h3>Latest News</h3>
+          <div id="newsContainer" style="min-height:60px;">
+            <div class="loading-spinner"><div class="spinner"></div></div>
+          </div>
+        </div>
+
+        <div class="trending-widget">
+          <h3>Trending Topics</h3>
+          <div id="trendingContainer">
+            <div class="trending-item">
+              <span class="trending-category">Technology</span>
+              <span class="trending-topic">#AI</span>
+              <span class="trending-count">2.5K posts</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ======================== NOTIFICATIONS ======================== -->
+    <div id="notificationsPage" class="page">
+      <div style="flex:1;">
+        <div class="page-header">
+          <h2>Notifications</h2>
+          <div class="header-actions">
+            <button class="icon-btn-header" onclick="markAllAsRead()">
+              <span class="material-icons" style="font-size:18px;">done_all</span>
+              <span>Mark all read</span>
+            </button>
+          </div>
+        </div>
+        <div id="notificationsList"></div>
+      </div>
+    </div>
+
+    <!-- ======================== PROFILE ======================== -->
+    <div id="profilePage" class="page">
+      <div style="flex:1;">
+        <div class="page-header">
+          <h2>Profile</h2>
+          <div class="header-actions">
+            <button class="icon-btn-header" onclick="shareProfile()">
+              <span class="material-icons" style="font-size:18px;">share</span>
+              <span class="share-text">Share</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="profile-banner" id="profileBanner">
+          <button class="edit-banner-btn" onclick="document.getElementById('bannerUpload').click()">
+            <span class="material-icons">photo_camera</span>
+          </button>
+          <input type="file" id="bannerUpload" accept="image/*" hidden>
+        </div>
+
+        <div class="profile-info">
+          <label for="avatarUpload" style="display:inline-block;cursor:pointer;position:relative;">
+            <img id="profileAvatar" class="profile-avatar" src="https://i.imgur.com/6VBx3io.png" alt="Avatar">
+            <div class="avatar-edit-overlay">
+              <span class="material-icons">photo_camera</span>
+            </div>
+          </label>
+          <input type="file" id="avatarUpload" accept="image/*" hidden>
+
+          <div class="profile-details">
+            <div class="profile-name">
+              <span id="profileName">Username</span>
+              <div id="profileBadges"></div>
+            </div>
+            <div class="profile-username" id="profileUsername">@username</div>
+            <div class="profile-email" id="profileEmail">
+              <span class="material-icons">email</span>
+              <span id="profileEmailSpan">user@email.com</span>
+            </div>
+            <div class="profile-meta">
+              <span id="profileGender"><span class="material-icons">wc</span> Not specified</span>
+              <span id="profileDob"><span class="material-icons">cake</span> Not specified</span>
+              <span id="profileJoined"><span class="material-icons">calendar_today</span> Joined recently</span>
+            </div>
+
+            <div class="profile-bio">
+              <textarea id="profileBioText" placeholder="Add your bio..." onblur="updateBio()"></textarea>
+            </div>
+
+            <div class="profile-stats">
+              <div class="stat" onclick="showFollowersModal()">
+                <span class="stat-value" id="followersCount">0</span>
+                <span class="stat-label">Followers</span>
+              </div>
+              <div class="stat" onclick="showFollowingModal()">
+                <span class="stat-value" id="followingCount">0</span>
+                <span class="stat-label">Following</span>
+              </div>
+              <div class="stat">
+                <span class="stat-value" id="postsCount">0</span>
+                <span class="stat-label">Posts</span>
+              </div>
+            </div>
+
+            <div class="interests-section">
+              <h3>Your Interests</h3>
+              <div class="interests-grid" id="interestsGrid">
+                <button type="button" class="interest-chip" data-interest="fun">🎉 Fun</button>
+                <button type="button" class="interest-chip" data-interest="gaming">🕹️ Gaming</button>
+                <button type="button" class="interest-chip" data-interest="education">📚 Education</button>
+                <button type="button" class="interest-chip" data-interest="tech">💻 Tech</button>
+                <button type="button" class="interest-chip" data-interest="nature">🌿 Nature</button>
+                <button type="button" class="interest-chip" data-interest="space">🚀 Space</button>
+                <button type="button" class="interest-chip" data-interest="entertainment">✨ Entertainment</button>
+                <button type="button" class="interest-chip" data-interest="news">📝 News</button>
+                <button type="button" class="interest-chip" data-interest="sport">⚽ Sport</button>
+                <button type="button" class="interest-chip" data-interest="business">💸 Business</button>
+                <button type="button" class="interest-chip" data-interest="lifestyle">🍷 Lifestyle</button>
+                <button type="button" class="interest-chip" data-interest="creativity">💡 Creativity</button>
+                <button type="button" class="interest-chip" data-interest="other">🟣 Other</button>
+              </div>
+              <p class="interests-info">Select up to 3 interests to personalize your feed</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="profile-posts-section">
+          <div class="profile-tabs">
+            <button class="profile-tab active" data-tab="posts">Posts</button>
+            <button class="profile-tab" data-tab="likes">Likes</button>
+            <button class="profile-tab" data-tab="reposts">Reposts</button>
+          </div>
+          <div id="userPosts"></div>
+          <div id="userLikedPosts" class="hidden"></div>
+          <div id="userRepostedPosts" class="hidden"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ======================== VIEW PROFILE (OTHER USERS) ======================== -->
+    <div id="viewProfilePage" class="page">
+      <div style="flex:1;">
+        <div class="page-header">
+          <button class="back-btn" onclick="goBackFromProfile()">
+            <span class="material-icons">arrow_back</span>
+          </button>
+          <h2>Profile</h2>
+          <div class="header-actions">
+            <button class="icon-btn-header" onclick="shareViewedProfile()">
+              <span class="material-icons" style="font-size:18px;">share</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="profile-banner" id="viewProfileBanner"></div>
+
+        <div class="profile-info">
+          <img id="viewProfileAvatar" class="profile-avatar" src="https://i.imgur.com/6VBx3io.png" alt="Avatar">
+          <button id="viewFollowBtn" class="follow-btn-profile">Follow</button>
+
+          <div class="profile-details">
+            <div class="profile-name">
+              <span id="viewProfileName">Username</span>
+              <div id="viewProfileBadges"></div>
+            </div>
+            <div class="profile-username" id="viewProfileUsername">@username</div>
+            <div class="profile-meta">
+              <span id="viewProfileJoined"><span class="material-icons">calendar_today</span> Joined recently</span>
+            </div>
+            <div class="profile-bio">
+              <p id="viewProfileBio">No bio yet.</p>
+            </div>
+            <div class="profile-stats">
+              <div class="stat">
+                <span class="stat-value" id="viewFollowersCount">0</span>
+                <span class="stat-label">Followers</span>
+              </div>
+              <div class="stat">
+                <span class="stat-value" id="viewFollowingCount">0</span>
+                <span class="stat-label">Following</span>
+              </div>
+              <div class="stat">
+                <span class="stat-value" id="viewPostsCount">0</span>
+                <span class="stat-label">Posts</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="profile-posts-section">
+          <div class="profile-posts-header">Posts</div>
+          <div id="viewUserPosts"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ======================== SETTINGS ======================== -->
+    <div id="settingsPage" class="page">
+      <div style="flex:1;padding-bottom:80px;">
+        <div class="glass-header">Settings</div>
+
+        <div class="settings-section">
+          <h3 class="section-title">Account</h3>
+          <div class="settings-item" onclick="showEditProfileModal()">
+            <div class="settings-item-left">
+              <span class="material-icons">edit</span>
+              <div class="item-text">
+                <h4>Edit Profile</h4>
+                <p>Update your personal information</p>
+              </div>
+            </div>
+            <span class="material-icons chevron">chevron_right</span>
+          </div>
+          <div class="settings-item" onclick="showChangePasswordModal()">
+            <div class="settings-item-left">
+              <span class="material-icons">lock</span>
+              <div class="item-text">
+                <h4>Change Password</h4>
+                <p>Update your account password</p>
+              </div>
+            </div>
+            <span class="material-icons chevron">chevron_right</span>
+          </div>
+        </div>
+
+        <div class="settings-section">
+          <h3 class="section-title">Badge Eligibility</h3>
+          <div class="badge-grid">
+            <div class="badge-card">
+              <span class="material-icons active-icon">verified</span>
+              <h4>Verified</h4>
+              <p>Professional profile &amp; 100+ posts</p>
+            </div>
+            <div class="badge-card">
+              <span class="material-icons elite-icon">stars</span>
+              <h4>Elite</h4>
+              <p>₹200 Fees</p>
+              <a href="payment_badges">
+                <button class="text-btn" style="margin-top:8px;">Get Elite</button>
+              </a>
+            </div>
+            <div class="badge-card">
+              <span class="material-icons active-user-icon">bolt</span>
+              <h4>Active</h4>
+              <p>Daily login for 30 days</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="settings-section">
+          <h3 class="section-title">Preferences</h3>
+          <div class="settings-item no-hover">
+            <div class="settings-item-left">
+              <span class="material-icons">notifications</span>
+              <div class="item-text">
+                <h4>Push Notifications</h4>
+                <p>Get notified about activity</p>
+              </div>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" id="notifToggle" checked>
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+          <div class="settings-item no-hover">
+            <div class="settings-item-left">
+              <span class="material-icons">dark_mode</span>
+              <div class="item-text">
+                <h4>Dark Mode</h4>
+                <p>Toggle dark theme</p>
+              </div>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" id="darkModeToggle" checked>
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+        </div>
+
+        <div class="settings-section">
+          <h3 class="section-title">Logged-in Devices</h3>
+          <div id="devicesList"></div>
+        </div>
+
+        <div class="settings-section">
+          <h3 class="section-title">Legal</h3>
+          <a href="#" class="settings-item" onclick="showTermsModal(); return false;">
+            <div class="settings-item-left">
+              <span class="material-icons">description</span>
+              <div class="item-text">
+                <h4>Terms and Conditions</h4>
+                <p>Our service agreement</p>
+              </div>
+            </div>
+            <span class="material-icons chevron">chevron_right</span>
+          </a>
+          <a href="#" class="settings-item" onclick="showPrivacyModal(); return false;">
+            <div class="settings-item-left">
+              <span class="material-icons">privacy_tip</span>
+              <div class="item-text">
+                <h4>Privacy Policy</h4>
+                <p>How we handle your data</p>
+              </div>
+            </div>
+            <span class="material-icons chevron">chevron_right</span>
+          </a>
+        </div>
+
+        <div class="settings-section">
+          <h3 class="section-title">Support</h3>
+          <div class="support-card">
+            <div class="support-info">
+              <span class="material-icons">support_agent</span>
+              <div>
+                <h4>Need help?</h4>
+                <p>Contact us: <strong><a href="mailto:support@potup.com">support@potup.com</a></strong></p>
+              </div>
+            </div>
+            <button class="contact-btn" onclick="emailSupport()">Email Us</button>
+          </div>
+        </div>
+
+        <div class="settings-section">
+          <button class="logout-full-btn" onclick="logout()">
+            <span class="material-icons">logout</span>
+            Log Out
+          </button>
+        </div>
+
+        <div class="settings-section danger-zone">
+          <h3 class="section-title">Danger Zone</h3>
+          <button class="delete-account-btn" onclick="showDeleteAccountModal()">
+            <span class="material-icons">delete_forever</span>
+            Delete Account
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ======================== POST PAGE ======================== -->
+    <div id="postPage" class="page">
+      <div style="flex:1;">
+        <div class="page-header">
+          <h2>Create Post</h2>
+        </div>
+
+        <div class="post-composer">
+          <div class="composer-wrapper">
+            <img id="composerAvatar" src="https://i.imgur.com/6VBx3io.png" alt="avatar">
+            <div class="composer-content">
+              <textarea id="postContent" placeholder="What's happening?" rows="3" maxlength="500"></textarea>
+              <div class="char-counter" id="charCounter">0 / 500</div>
+
+              <div id="imagePreviewContainer" class="image-preview-container hidden">
+                <img id="imagePreview" src="" alt="preview">
+                <button class="remove-image-btn" onclick="removeImagePreview()">
+                  <span class="material-icons">close</span>
+                </button>
+              </div>
+
+              <div class="category-selector">
+                <label>Select a category for your post *</label>
+                <div class="category-options" id="postCategoryOptions">
+                  <button type="button" class="category-option" data-category="fun">🎉 Fun</button>
+                  <button type="button" class="category-option" data-category="gaming">🕹️ Gaming</button>
+                  <button type="button" class="category-option" data-category="education">📚 Education</button>
+                  <button type="button" class="category-option" data-category="tech">💻 Tech</button>
+                  <button type="button" class="category-option" data-category="nature">🌿 Nature</button>
+                  <button type="button" class="category-option" data-category="space">🚀 Space</button>
+                  <button type="button" class="category-option" data-category="entertainment">✨ Entertainment</button>
+                  <button type="button" class="category-option" data-category="news">📝 News</button>
+                  <button type="button" class="category-option" data-category="sport">⚽ Sport</button>
+                  <button type="button" class="category-option" data-category="business">💸 Business</button>
+                  <button type="button" class="category-option" data-category="lifestyle">🍷 Lifestyle</button>
+                  <button type="button" class="category-option" data-category="creativity">💡 Creativity</button>
+                  <button type="button" class="category-option" data-category="other">🟣 Other</button>
+                </div>
+              </div>
+
+              <div class="composer-actions">
+                <div class="composer-icons">
+                  <button id="emojiBtn" class="icon-btn" type="button">
+                    <span class="material-icons">sentiment_satisfied_alt</span>
+                  </button>
+                  <label for="postImage" class="icon-btn">
+                    <span class="material-icons">image</span>
+                  </label>
+                  <input type="file" id="postImage" accept="image/*">
+                  <button class="icon-btn" type="button" onclick="addPoll()">
+                    <span class="material-icons">poll</span>
+                  </button>
+                </div>
+                <button class="post-btn" id="createPostBtn" onclick="createPost()" disabled>
+                  <span class="btn-text">Post</span>
+                  <span class="btn-loader hidden"><span class="spinner-small"></span></span>
+                </button>
+              </div>
+
+              <div id="emojiPicker" class="hidden">
+                <div class="emoji-search">
+                  <input type="text" id="emojiSearch" placeholder="Search emojis...">
+                </div>
+                <div id="emojiGrid"></div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+
+<!-- ======================================================
+     MODALS
+     ====================================================== -->
+
+<!-- Profile Modal (Quick View) -->
+<div id="profileModal" class="modal">
+  <div class="modal-box">
+    <span class="close" onclick="closeProfileModal()">✕</span>
+    <div id="modalBanner" class="profile-banner-modal"></div>
+    <div class="modal-header-content">
+      <img id="modalAvatar" class="modal-avatar" src="https://i.imgur.com/6VBx3io.png" alt="avatar">
+      <div class="modal-content">
+        <div class="modal-username" id="modalUserId"></div>
+        <div id="modalBadges" class="modal-badges"></div>
+        <p id="modalBio" class="modal-bio"></p>
+        <div class="modal-stats">
+          <span><strong id="modalFollowers">0</strong> Followers</span>
+          <span><strong id="modalFollowing">0</strong> Following</span>
+        </div>
+        <div class="modal-actions">
+          <button id="modalFollowBtn" class="modal-follow-btn">Follow</button>
+          <button class="modal-view-btn" onclick="viewFullProfile()">View Profile</button>
+          <button class="modal-share-btn" onclick="shareModalProfile()">
+            <span class="material-icons">share</span>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="modal-posts-section">
+      <h4>Recent Posts</h4>
+      <div id="modalUserPosts" class="modal-posts-list"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Mobile Search Modal -->
+<div id="mobileSearchModal" class="modal mobile-search-modal">
+  <div class="mobile-search-content">
+    <div class="mobile-search-header">
+      <h3>Search</h3>
+      <button class="close-search" onclick="closeMobileSearch()">✕</button>
+    </div>
+    <div class="search-container">
+      <span class="material-icons search-icon">search</span>
+      <input type="text" id="mobileUserSearch" placeholder="Search users..." class="search-input">
+    </div>
+    <div id="mobileSearchResults" class="search-results"></div>
+  </div>
+</div>
+
+<!-- Reply Modal -->
+<div id="replyModal" class="modal reply-modal">
+  <div class="reply-modal-content">
+    <div class="reply-modal-header">
+      <h3>Replies</h3>
+      <button class="close-reply" onclick="closeReplyModal()">✕</button>
+    </div>
+    <div class="original-post-preview" id="originalPostPreview"></div>
+    <div class="reply-composer">
+      <img id="replyComposerAvatar" src="https://i.imgur.com/6VBx3io.png" alt="avatar">
+      <div class="reply-input-wrapper">
+        <textarea id="replyContent" placeholder="Write your reply..." maxlength="500"></textarea>
+        <button class="post-btn reply-submit-btn" onclick="submitReply()">Reply</button>
+      </div>
+    </div>
+    <div class="replies-list">
+      <h4>All Replies (<span id="repliesCount">0</span>)</h4>
+      <div id="repliesList"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Share Modal -->
+<div id="shareModal" class="modal">
+  <div class="share-modal-content">
+    <div class="share-modal-header">
+      <h3>Share</h3>
+      <button class="close-share" onclick="closeShareModal()">✕</button>
+    </div>
+    <div class="share-url-container">
+      <input type="text" id="shareUrl" readonly>
+      <button class="copy-url-btn" onclick="copyShareUrl()">
+        <span class="material-icons">content_copy</span>
+      </button>
+    </div>
+    <div class="share-options">
+      <button class="share-option" onclick="shareToTwitter()">
+        <span class="material-icons">share</span>
+        Twitter
+      </button>
+      <button class="share-option" onclick="shareToWhatsApp()">
+        <span class="material-icons">chat</span>
+        WhatsApp
+      </button>
+      <button class="share-option" onclick="shareToTelegram()">
+        <span class="material-icons">send</span>
+        Telegram
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Edit Profile Modal -->
+<div id="editProfileModal" class="modal">
+  <div class="edit-profile-content">
+    <div class="edit-profile-header">
+      <h3>Edit Profile</h3>
+      <button class="close-edit" onclick="closeEditProfileModal()">✕</button>
+    </div>
+    <form id="editProfileForm">
+      <div class="input-group">
+        <label>Full Name</label>
+        <input type="text" id="editFullName">
+      </div>
+      <div class="input-group">
+        <label>Username</label>
+        <input type="text" id="editUsername">
+      </div>
+      <div class="input-group">
+        <label>Bio</label>
+        <textarea id="editBio" rows="3"></textarea>
+      </div>
+      <div class="input-group">
+        <label>Date of Birth</label>
+        <input type="date" id="editDob">
+      </div>
+      <div class="input-group">
+        <label>Gender</label>
+        <select id="editGender">
+          <option value="male">Male</option>
+          <option value="female">Female</option>
+          <option value="non-binary">Non-binary</option>
+          <option value="prefer-not-to-say">Prefer not to say</option>
+        </select>
+      </div>
+      <button type="submit" class="save-profile-btn">Save Changes</button>
+    </form>
+  </div>
+</div>
+
+<!-- Change Password Modal -->
+<div id="changePasswordModal" class="modal">
+  <div class="change-password-content">
+    <div class="change-password-header">
+      <h3>Change Password</h3>
+      <button class="close-password" onclick="closeChangePasswordModal()">✕</button>
+    </div>
+    <form id="changePasswordForm">
+      <div class="input-group">
+        <label>Current Password</label>
+        <input type="password" id="currentPassword" required>
+      </div>
+      <div class="input-group">
+        <label>New Password</label>
+        <input type="password" id="newPassword" required minlength="6">
+      </div>
+      <div class="input-group">
+        <label>Confirm New Password</label>
+        <input type="password" id="confirmNewPassword" required>
+      </div>
+      <div class="password-error" id="passwordError"></div>
+      <button type="submit" class="save-password-btn">Update Password</button>
+    </form>
+  </div>
+</div>
+
+<!-- Delete Account Modal -->
+<div id="deleteAccountModal" class="modal">
+  <div class="delete-account-content">
+    <div class="delete-account-header">
+      <span class="material-icons warning-icon">warning</span>
+      <h3>Delete Account</h3>
+    </div>
+    <p class="delete-warning">This action is permanent and cannot be undone. All your data, posts, and connections will be permanently deleted.</p>
+    <div class="input-group">
+      <label>Type your username to confirm: <strong id="confirmUsername"></strong></label>
+      <input type="text" id="deleteConfirmInput" placeholder="Enter username">
+    </div>
+    <div class="delete-actions">
+      <button class="cancel-delete-btn" onclick="closeDeleteAccountModal()">Cancel</button>
+      <button class="confirm-delete-btn" id="confirmDeleteBtn" onclick="deleteAccount()" disabled>Delete Forever</button>
+    </div>
+  </div>
+</div>
+
+<!-- Followers Modal -->
+<div id="followersModal" class="modal">
+  <div class="followers-modal-content">
+    <span class="close" onclick="closeFollowersModal()">✕</span>
+    <h3>Followers</h3>
+    <div id="followersList"></div>
+  </div>
+</div>
+
+<!-- Following Modal -->
+<div id="followingModal" class="modal">
+  <div class="following-modal-content">
+    <span class="close" onclick="closeFollowingModal()">✕</span>
+    <h3>Following</h3>
+    <div id="followingList"></div>
+  </div>
+</div>
+
+<!-- Terms Modal -->
+<div id="termsModal" class="modal">
+  <div class="terms-modal-content">
+    <span class="close" onclick="closeTermsModal()">✕</span>
+    <h3>Terms and Conditions</h3>
+    <div id="termsContent"></div>
+  </div>
+</div>
+
+<!-- Privacy Modal -->
+<div id="privacyModal" class="modal">
+  <div class="privacy-modal-content">
+    <span class="close" onclick="closePrivacyModal()">✕</span>
+    <h3>Privacy Policy</h3>
+    <div id="privacyContent"></div>
+  </div>
+</div>
+
+<!-- Toast Container — app.js uses id="toastContainer" -->
+<div id="toastContainer"></div>
+
+</body>
+</html>
